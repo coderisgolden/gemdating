@@ -99,16 +99,14 @@ export function DealbreakersLifestyleStep({
                   ['non-smoker', 'Must be Non-Smoker'],
                   ['smoker-ok', 'Smoker is OK'],
                 ].map(([val, label]) => (
-                  <div
-                    key={val}
-                    className="flex items-center space-x-2 shadow-sm bg-w
-                     rounded-full px-4 py-2"
-                  >
-                    <RadioGroupItem value={val} />
-                    <Label className="cursor-pointer">
-                      {label}
-                    </Label>
-                  </div>
+                  <Label
+      key={val}
+      htmlFor={val}
+      className="flex items-center space-x-2 shadow-sm bg-white rounded-full px-4 py-2 cursor-pointer"
+    >
+      <RadioGroupItem id={val} value={val} />
+      <span>{label}</span>
+    </Label>
                 ))}
               </RadioGroup>
             </div>
@@ -125,15 +123,14 @@ export function DealbreakersLifestyleStep({
                   ['non-drinker', 'Non-Drinker Only'],
                   ['social', 'Social Drinker OK'],
                 ].map(([val, label]) => (
-                  <div
-                    key={val}
-                    className="flex items-center space-x-2 bg-w rounded-full shadow-sm px-4 py-2"
-                  >
-                    <RadioGroupItem value={val} />
-                    <Label className="cursor-pointer">
-                      {label}
-                    </Label>
-                  </div>
+                  <Label
+      key={val}
+      htmlFor={val}
+      className="flex items-center space-x-2 shadow-sm bg-white rounded-full px-4 py-2 cursor-pointer"
+    >
+      <RadioGroupItem id={val} value={val} />
+      <span>{label}</span>
+    </Label>
                 ))}
               </RadioGroup>
             </div>
@@ -161,15 +158,14 @@ export function DealbreakersLifestyleStep({
               ['want', 'Want Children'],
               ['no-children', "Don't Want Children"],
             ].map(([val, label]) => (
-              <div
-                key={val}
-                className="flex items-center space-x-2 bg-white shadow-sm rounded-full px-4 py-2"
-              >
-                <RadioGroupItem value={val} />
-                <Label className="cursor-pointer">
-                  {label}
-                </Label>
-              </div>
+              <Label
+      key={val}
+      htmlFor={val}
+      className="flex items-center space-x-2 shadow-sm bg-white rounded-full px-4 py-2 cursor-pointer"
+    >
+      <RadioGroupItem id={val} value={val} />
+      <span>{label}</span>
+    </Label>
             ))}
           </RadioGroup>
 
@@ -183,15 +179,14 @@ export function DealbreakersLifestyleStep({
               ['love-pets', 'Must Love Pets'],
               ['no-pets', 'No Pets Please'],
             ].map(([val, label]) => (
-              <div
-                key={val}
-                className="flex items-center space-x-2 bg-white shadow-sm rounded-full px-4 py-2"
-              >
-                <RadioGroupItem value={val} />
-                <Label className="cursor-pointer">
-                  {label}
-                </Label>
-              </div>
+              <Label
+      key={val}
+      htmlFor={val}
+      className="flex items-center space-x-2 shadow-sm bg-white rounded-full px-4 py-2 cursor-pointer"
+    >
+      <RadioGroupItem id={val} value={val} />
+      <span>{label}</span>
+    </Label>
             ))}
           </RadioGroup>
         </div>

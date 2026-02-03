@@ -1,6 +1,6 @@
 export function SplashScreen() {
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center bg-background">
+    <div className="h-screen w-screen flex flex-col items-center justify-center bg-gray-600">
       <div className="relative flex items-center justify-center">
         <div className="absolute h-16 w-16 animate-ping rounded-full bg-primary/20" />
         <div className="relative h-12 w-12 text-primary">

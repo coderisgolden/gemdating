@@ -124,7 +124,7 @@ export function MatchPreferencesV2Step({
                 <SelectTrigger>
                   <SelectValue placeholder="Select age range" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-popover text-popover-foreground">
                   <SelectGroup>
                     <SelectItem value="18-25">18 - 25</SelectItem>
                     <SelectItem value="26-35">26 - 35</SelectItem>
@@ -167,13 +167,14 @@ export function MatchPreferencesV2Step({
               className="flex gap-4 flex-wrap mt-2"
             >
               {['women', 'men', 'anyone'].map((v) => (
-                <div
-                  key={v}
-                  className="flex items-center space-x-2 bg-white rounded-full px-4 py-2 shadow-sm "
-                >
-                  <RadioGroupItem value={v} />
-                  <Label className='w-12 h-5 '>{v}</Label>
-                </div>
+                <Label
+      key={v}
+      htmlFor={v}
+      className="flex items-center space-x-2 bg-white rounded-full px-4 py-2 shadow-sm cursor-pointer"
+    >
+      <RadioGroupItem id={v} value={v} />
+      <span className="w-12 h-5">{v}</span>
+    </Label>
               ))}
             </RadioGroup>
           </div>

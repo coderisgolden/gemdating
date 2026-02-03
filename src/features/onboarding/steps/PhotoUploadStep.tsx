@@ -18,6 +18,7 @@ type PhotoUploadStepProps = {
   onSave: () => void
   onBack: () => void
   onUpgrade?: () => void
+  onRemoveFile: (index: number) => void
 }
 
 export function PhotoUploadStep({
@@ -26,16 +27,21 @@ export function PhotoUploadStep({
   onSave,
   onBack,
   onUpgrade,
+  onRemoveFile,
 }: PhotoUploadStepProps) {
   const [error, setError] = useState<string | null>(null)
 
-  const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (!e.target.files) return
-    onFilesSelected(Array.from(e.target.files))
-    setError(null)
-  }
+  // 
+  
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  if (!e.target.files) return;
+  
+  const newFiles = Array.from(e.target.files);
+  // Lägg till de nya filerna till de befintliga istället för att ersätta
+  onFilesSelected([...files, ...newFiles]); 
+  setError(null);
+};
+
 
   const handleNext = () => {
     if (files.length === 0) {
@@ -53,7 +59,7 @@ export function PhotoUploadStep({
       subtitle="Upload at least one photo to complete your profile"
       onNext={handleNext}
       onBack={onBack}
-      nextLabel="Save"
+      nextLabel="Save and upload"
     >
       <div
         className={[
@@ -80,6 +86,34 @@ export function PhotoUploadStep({
               onChange={handleFileChange}
             />
 
+            {/* Selected Photos Preview */}
+
+{/* Selected Photos Preview */}
+{files.length > 0 && (
+  <div className="grid grid-cols-3 gap-2 mt-4">
+    {files.map((file, index) => ( // Använd index här
+      <div key={index} className="relative aspect-square rounded-lg overflow-hidden border">
+        <img 
+          src={URL.createObjectURL(file)} 
+          alt="preview" 
+          className="object-cover w-full h-full" 
+        />
+        
+        {/* Ta bort-knapp */}
+        <button
+          onClick={() => onRemoveFile(index)}
+          className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full shadow-lg hover:bg-red-700 transition"
+          aria-label="Remove photo"
+        >
+          {/* Använd en liten kryss-ikon, t.ex. X från lucide-react */}
+          <svg xmlns="http://www.w3.org" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+    ))}
+  </div>
+)}
+
+
             <label htmlFor="photo-upload" className="cursor-pointer block">
               <div className="flex flex-col items-center justify-center">
                 <div className="w-20 h-20 bg-brand-100 rounded-full flex items-center justify-center mb-4">
@@ -91,13 +125,18 @@ export function PhotoUploadStep({
                 <p className="text-sm text-gray-500 mb-4">
                   PNG, JPG or JPEG (max. 5MB each)
                 </p>
-                <Button
+                {/* <Button
                   type="button"
                   className="bg-brand-500 hover:bg-brand-600 text-white rounded-full px-6 shadow-md"
                 >
                   <ImagePlus className="w-4 h-4 mr-2" />
                   Choose Photos
-                </Button>
+                </Button> */}
+                <div className="text-sm text-gray-400">
+                  <h3>Recommended: At least 3 photos for best results</h3>
+                </div>
+
+
               </div>
             </label>
           </div>
@@ -133,7 +172,7 @@ export function PhotoUploadStep({
         </div>
 
         {/* Premium */}
-        <div className="bg-gradient-to-r from-brand-500 to-rose-400 rounded-2xl shadow-md p-6 text-white">
+        <div className="bg-linear-to-r from-brand-500 to-rose-400 rounded-2xl shadow-md p-6 text-white">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">

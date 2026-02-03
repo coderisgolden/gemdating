@@ -8,6 +8,8 @@ export type Interest = {
 }
 
 export type AboutYouValues = {
+  name?: string
+  age?: number
   height?: string
   education?: string
   occupation?: string

@@ -9,47 +9,36 @@ import { SplashScreen } from "./components/splashscreen"
 function Guard({ children }: { children: React.ReactNode }) {
   const { user, profile, loading } = useAuth()
   const location = useLocation()
-
-  // Om loading är true (vi kollar session ELLER hämtar profil), visa Splash
   if (loading) {
-    return (
-      // <div className="h-screen w-screen flex items-center justify-center bg-background">
-      //   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-      // </div>
-      <SplashScreen /> 
-    )
-  }
-
+    return (<SplashScreen /> )}
   if (!user) return <Navigate to="/" replace />
-
-  // Nu vet vi med säkerhet om onboarding_complete är true eller false
   if (profile && !profile.onboarding_complete && location.pathname !== "/onboarding") {
     return <Navigate to="/onboarding" replace />
-  }
+ }
+return <>{children}</>
+}
 
-  return <>{children}</>
+function PageWrapper({ children }: { children: React.ReactNode }) {
+  return <div className="animate-fade-in">{children}</div>
 }
 
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-       
-<Routes>
-  {/* Publik */}
-  <Route path="/" element={<AuthPage />} />
+       <Routes>
+        {/* Publik */}
+          <Route path="/" element={<AuthPage />} />
 
-     {/* 2. ONBOARDING (Guard finns, men ingen navbar layout) */}
-  <Route 
-    path="/onboarding" 
-    element={
+        {/* 2. ONBOARDING (Guard finns, men ingen navbar layout) */}
+  <Route path="/onboarding" element={
       <Guard>
         <OnboardingPage />
       </Guard>
     }  />
 
 
-  {/* Skyddat område med Layout */}
+       {/* Skyddat område med Layout */}
   <Route 
     element={
       <Guard>
@@ -69,27 +58,4 @@ export default function App() {
 }
 
 
-    //  <Routes>
-    //       {/* Publik rutt */}
-    //       <Route path="/" element={<AuthPage />} />
-
-    //       {/* Onboarding - Skyddad av Guard */}
-    //       <Route
-    //         path="/onboarding"
-    //         element={
-    //           <Guard>
-    //             <OnboardingPage />
-    //           </Guard>
-    //         }
-    //       />
-
-    //       {/* Appen - Skyddad av Guard */}
-    //       <Route
-    //         path="/app"
-    //         element={
-    //           <Guard>
-    //             <AppPage />
-    //           </Guard>
-    //         }
-    //       />
-    //     </Routes>
+    

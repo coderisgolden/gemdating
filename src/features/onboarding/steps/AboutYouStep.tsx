@@ -22,11 +22,14 @@ export function AboutYouStep({
 
   // ✅ POLICY: minst 1 valt
   const isValid =
-    !!values.height ||
-    !!values.education ||
-    !!values.occupation ||
-    values.pets.length > 0 ||
-    !!values.relationshipStatus
+    // !!values.height ||
+    // !!values.education ||
+    // !!values.occupation ||
+    // values.pets.length > 0 ||
+    // !!values.relationshipStatus||
+    // !!values.name ||
+    // !!values.age
+    !!values.name && !!values.age
 
   function handleNext() {
     if (!isValid) {
@@ -40,7 +43,7 @@ export function AboutYouStep({
     'border rounded-md px-3 py-2 transition w-full ' +
     'border-neutral-300 ' +
     'hover:border-brand-400 ' +
-    'focus:outline-none focus:ring-2 focus:ring-brand-100 focus:border-brand-200'
+    'focous:outline-none'
 
   return (
     <OnboardingLayout
@@ -57,9 +60,50 @@ export function AboutYouStep({
       >
         {showError && !isValid && (
           <p className="text-sm text-red-500">
-            Please fill in at least one field before continuing.
+            Please fill Name and age.
           </p>
         )}
+
+
+        {/* Name and age */}
+        <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+  <h3 className="text-lg font-semibold text-neutral-800">
+    Basic info
+  </h3>
+
+  <div className="flex flex-col gap-4">
+    {/* Name */}
+    <label className="flex flex-col gap-1 text-sm">
+      Name
+      <input
+        type="text"
+        value={values.name}
+        onChange={(e) => onChange({ name: e.target.value })}
+        placeholder="Your name"
+        className={fieldClass}
+      />
+    </label>
+
+    {/* Age */}
+    <label className="flex flex-col gap-1 text-sm">
+      Age
+      <select
+        value={values.age}
+        onChange={(e) => onChange({ age: Number(e.target.value) })}
+        className={fieldClass}
+      >
+        <option value="">Select age</option>
+        {Array.from({ length: 63 }, (_, i) => i + 18).map((age) => (
+          <option key={age} value={age}>
+            {age}
+          </option>
+        ))}
+      </select>
+    </label>
+  </div>
+</div>
+
+
 
         {/* Basic info */}
         <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">

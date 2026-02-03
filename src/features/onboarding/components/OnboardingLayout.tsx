@@ -41,7 +41,7 @@ export function OnboardingLayout({
         </div>
 
         {/* Content */}
-        <div className="transition-opacity duration-300 ease-out">
+        <div key={location.pathname} className="animate-fade-in">
           {children}
         </div>
 

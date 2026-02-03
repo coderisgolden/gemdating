@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
-
+import { useAuth } from "@/context/AuthContext"
 import { OnboardingStep } from './steps'
 import { OnboardingProgress } from '@/features/onboarding/components/OnboardingProgress'
 
@@ -14,11 +14,14 @@ import { DealbreakersLifestyleStep } from './steps/DealbreakersLifestyleStep'
 import { PhotoUploadStep } from './steps/PhotoUploadStep'
 
 import { INTERESTS } from './interests.data'
+import { SplashScreen } from '@/components/splashscreen'
 
 const INITIAL_DATA: OnboardingData = {
   interests: [],
   aboutYou: {
     pets: [],
+    name:'',
+    age: 18,
   },
   matchPreferences: {
     dealbreakers: {
@@ -61,8 +64,10 @@ const INITIAL_DATA: OnboardingData = {
 }
 
 export function OnboardingStepController() {
+  // const navigate = useNavigate()
+  // const { refreshProfile } = useAuth()
+  const { user, refreshProfile } = useAuth()
   const navigate = useNavigate()
-
   const [step, setStep] = useState<OnboardingStep>(
     OnboardingStep.Interests
   )
@@ -71,6 +76,16 @@ export function OnboardingStepController() {
   // ✅ NYA STATES
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+
+  
+  const handleRemoveFile = (index: number) => {
+    setData(d => ({
+      ...d,
+      photos: d.photos.filter((_, i) => i !== index)
+    }));
+  };
+
+
 
   const goNext = () => {
     setStep((current) =>
@@ -85,13 +100,13 @@ export function OnboardingStepController() {
   }
 
   
+
+  
 const finish = async () => {
   setIsSaving(true)
   setSaveError(null)
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
     setSaveError('User not authenticated')
@@ -99,32 +114,58 @@ const finish = async () => {
     return
   }
 
-  const { error } = await supabase
-  .schema('public')
-  .from('profiles')
-  .update({
-    interests: JSON.stringify(data.interests),
-    about_you: data.aboutYou,
-    dealbreakers_lifestyle: data.dealbreakersLifestyle,
-    match_preferences_v2: data.matchPreferencesV2,
-    onboarding_complete: true,
-  })
-  .eq('id', user.id)
+    try {
+    // 1. Ladda upp ALLA bilder och samla deras URL:er
+    const uploadPromises = data.photos.map(async (file) => {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${crypto.randomUUID()}.${fileExt}`;
+      const filePath = `${user.id}/${fileName}`;
 
-  if (error) {
-    console.error('ONBOARDING SAVE ERROR', error)
-    setSaveError('Something went wrong while saving. Please try again.')
+      const { error: uploadError } = await supabase.storage
+        .from('onboarding_photos')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('onboarding_photos')
+        .getPublicUrl(filePath);
+
+      return publicUrl;
+    });
+
+    const photoUrls = await Promise.all(uploadPromises);
+
+
+
+    // 2. UPDATE PROFILE TABLE
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({
+        interests: JSON.stringify(data.interests),
+        about_you: data.aboutYou,
+        dealbreakers_lifestyle: data.dealbreakersLifestyle,
+        match_preferences_v2: data.matchPreferencesV2,
+        photo_urls: photoUrls, // Make sure this column exists in SQL!
+        onboarding_complete: true,
+      })
+      .eq('id', user.id)
+
+    if (updateError) throw updateError
+
+    
+    
+    await refreshProfile()
+    navigate('/app')
+
+  } catch (error: any) {
+    console.error('SAVE ERROR', error)
+    setSaveError(error.message || 'Something went wrong while saving.')
+  } finally {
     setIsSaving(false)
-    return
-
-
-    navigate('/discover')
   }
-
-  setIsSaving(false)
-  // ❌ ingen navigate här
-  // AuthContext + Guards redirectar automatiskt till /discover
 }
+
 
 
 
@@ -212,6 +253,7 @@ const finish = async () => {
         }
         onSave={finish}
         onBack={goBack}
+        onRemoveFile={handleRemoveFile}
       />
     )
   }
@@ -232,8 +274,8 @@ const finish = async () => {
 
         {/* ✅ LOADING OVERLAY */}
         {isSaving && (
-          <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-neutral-300 border-t-[var(--color-brand-600)]" />
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background">
+            <SplashScreen />
           </div>
         )}
       </div>
