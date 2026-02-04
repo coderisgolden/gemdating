@@ -142,7 +142,7 @@ const finish = async () => {
     const { error: updateError } = await supabase
       .from('profiles')
       .update({
-        interests: JSON.stringify(data.interests),
+        interests: data.interests,
         about_you: data.aboutYou,
         dealbreakers_lifestyle: data.dealbreakersLifestyle,
         match_preferences_v2: data.matchPreferencesV2,
