@@ -5,6 +5,7 @@ import AppPage from "./pages/AppPage"
 import OnboardingPage from "./pages/OnboardingPage" // Importera din nya sida
 import AppLayout from "./components/AppLayout"
 import { SplashScreen } from "./components/splashscreen"
+import { ChatPage } from './pages/ChatPage';
 
 function Guard({ children }: { children: React.ReactNode }) {
   const { user, profile, loading } = useAuth()
@@ -18,9 +19,9 @@ function Guard({ children }: { children: React.ReactNode }) {
 return <>{children}</>
 }
 
-function PageWrapper({ children }: { children: React.ReactNode }) {
-  return <div className="animate-fade-in">{children}</div>
-}
+// function PageWrapper({ children }: { children: React.ReactNode }) {
+//   return <div className="animate-fade-in">{children}</div>
+// }
 
 export default function App() {
   return (
@@ -48,6 +49,7 @@ export default function App() {
   >
     <Route path="/app" element={<AppPage />} />
     <Route path="/onboarding" element={<OnboardingPage />} />
+    <Route path="/chat" element={<ChatPage />} />
     {/* Du kan lägga till fler sidor här, t.ex. /settings */}
   </Route>
 </Routes>

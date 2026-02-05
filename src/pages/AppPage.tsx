@@ -6,24 +6,59 @@ import { SplashScreen } from "@/components/splashscreen"
 export default function AppPage() {
   const [profiles, setProfiles] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+   const [myAvatar, setMyAvatar] = useState<string | null>(null);
+
+
+  // useEffect(() => {
+  //   async function loadDiscover() {
+  //     const { data: { user } } = await supabase.auth.getUser()
+      
+  //     const { data, error } = await supabase
+  //       .from('profiles')
+  //       .select('*')
+  //       .eq('onboarding_complete', true)
+  //       .neq('id', user?.id) // Don't show yourself
+  //       .limit(20)
+
+  //     if (!error && data) setProfiles(data)
+  //     setLoading(false)
+  //   }
+
+  //   loadDiscover()
+  // }, [])
 
   useEffect(() => {
-    async function loadDiscover() {
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('onboarding_complete', true)
-        .neq('id', user?.id) // Don't show yourself
-        .limit(20)
+  async function loadDiscover() {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
 
-      if (!error && data) setProfiles(data)
-      setLoading(false)
+    // 1. Hämta din egen profilbild
+    const { data: myData } = await supabase
+      .from('profiles')
+      .select('photo_urls') // Eller 'photo_url' beroende på ditt kolumnnamn
+      .eq('id', user.id)
+      .single()
+
+    if (myData) {
+      // Om photo_urls är en array, ta första bilden, annars ta strängen
+      const myImg = Array.isArray(myData.photo_urls) ? myData.photo_urls[0] : myData.photo_urls
+      setMyAvatar(myImg)
     }
 
-    loadDiscover()
-  }, [])
+    // 2. Hämta andras profiler (din befintliga kod)
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('onboarding_complete', true)
+      .neq('id', user.id)
+      .limit(20)
+
+    if (!error && data) setProfiles(data)
+    setLoading(false)
+  }
+
+  loadDiscover()
+}, [])
 
   if (loading) return <SplashScreen />
 
@@ -41,7 +76,7 @@ export default function AppPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {profiles.map((p) => (
-            <UserCard key={p.id} profile={p} />
+            <UserCard key={p.id} profile={p} currentUserPhoto={myAvatar} />
           ))}
         </div>
       )}

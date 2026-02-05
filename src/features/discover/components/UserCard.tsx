@@ -9,15 +9,19 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Card } from "@/components/ui/card"
-import { Image, User,  Heart, ArrowLeft, ArrowRight } from "lucide-react"
+import { Image, User,  Heart, } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel"
 import { Button } from "@/components/ui/button" // För Like-knappen
-// import  { CarouselApi } from "@/components/ui/carousel"
+import { supabase } from "@/lib/supabase"
+import {useState } from "react"
+import { MatchModal } from "@/components/MatchModal"
+import { useNavigate } from 'react-router-dom';
+
 
 import * as React from 'react'; // Behövs för useState och useEffect i modalen
 
-// ... (Interface Profile och interestsArray-logiken från tidigare steg) ...
+
 interface Profile {
   id: string;
   photo_urls: string[];
@@ -35,12 +39,26 @@ interface Profile {
   };
 }
 
+interface UserCardProps {
+  profile: Profile;
+  currentUserPhoto: string | null;
+}
 
-export function UserCard({ profile }: { profile: Profile }) {
+
+
+
+
+
+export function UserCard({ profile,  currentUserPhoto }: UserCardProps) {
   const name = profile.about_you?.name || "Unknown"
   const age = profile.about_you?.age || ""
   const mainPhoto = profile.photo_urls?.[0]
   const photoCount = profile.photo_urls?.length || 0
+  const [open, setOpen] = useState(false); 
+  const [showMatchModal, setShowMatchModal] = useState(false);
+  const [matchData, setMatchData] = useState<{ isMatch: boolean; matchId: string } | null>(null);
+   const navigate = useNavigate();
+  
 
   // Logik för att hantera gamla "stringifyade" interests
   let interestsArray: string[] = [];
@@ -54,10 +72,49 @@ export function UserCard({ profile }: { profile: Profile }) {
   } catch (e) {
     interestsArray = [];
   }
+
+
+
+  //Handelike function
+  const handleLike = async () => {
+    const { data, error } = await supabase.rpc('handle_like', { 
+      target_user_id: profile.id 
+    });
+
+    if (error) return;
+    setMatchData(data);
+
+    if (data.isMatch) {
+      setOpen(false); // 👈 Detta stänger nu Dialogen tack vare 'open={open}' nedan
+      setShowMatchModal(true);
+    } else {
+      setOpen(false);
+    }
+  };
+
+
+const onSendMessage = () => {
+
+  alert("Funktionen onSendMessage körs!"); // Kommer denna upp?
+  console.log("Match ID:", matchData?.matchId);
+  if (matchData?.matchId) {
+    // Stäng alla fönster först
+    setShowMatchModal(false);
+    setOpen(false); 
+    
+    // Navigera i React Router
+    navigate(`/chat?matchId=${matchData.matchId}`);
+  }
+};
+
   
 
   return (
-    <Dialog>
+
+    <>  
+
+
+  <Dialog open={open} onOpenChange={setOpen}>
        <DialogTrigger asChild>
         <Card className="overflow-hidden group cursor-pointer hover:shadow-xl transition-all border-none bg-secondary/20 relative">
           <div className="relative aspect-3/4">
@@ -85,83 +142,195 @@ export function UserCard({ profile }: { profile: Profile }) {
       </DialogTrigger>
 
       {/* MODALEN STARTAR HÄR */}
-<DialogContent className="fixed z-overlay bg-white flex flex-col overflow-hidden transition-all duration-[350ms] ease-out will-change-transform
-  inset-0
-  md:left-1/2 md:top-1/2
-  md:-translate-x-1/2 md:-translate-y-1/2
-  md:w-full md:max-w-[1200px]
-  md:h-[90vh]
-  md:max-h-[900px]
-  md:rounded-lg md:shadow-2xl
-  p-0">  
+        <DialogContent className="/* Mobil: Fullskärm och nollställ centrering */
+          fixed inset-0 translate-x-0 translate-y-0 max-w-none h-full w-full rounded-none border-none p-0
+          
+          /* Desktop (md och uppåt): Centrerad box */
+          md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 
+          md:w-full md:max-w-[1200px] md:h-[90vh] md:max-h-[900px] 
+          md:rounded-lg md:border md:shadow-2xl md:p-0">
+                
+          {/* Scrollbar wrapper */}
+          <div className="overflow-y-auto overflow-x-hidden h-full">
+            
+            {/* Grid layout */}
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_400px] gap-0"> 
+            
+              {/* VÄNSTER KOLUMN: Carousel */}
+              <div className="relative p-4 md:p-6 flex-shrink-0">
+                <div className="w-full aspect-[3/4] max-h-[600px] md:max-h-[800px] mx-auto">
+                  {profile.photo_urls && profile.photo_urls.length > 0 ? (
+                    <PhotoCarousel urls={profile.photo_urls} name={name} />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-muted rounded-lg">
+                      <User className="w-20 h-20 text-muted-foreground" />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+      {/* HÖGER KOLUMN: Information */}
+      <div className="flex flex-col md:border-l md:border-gray-200">
         
-        {/* Scrollbar wrapper */}
-        <div className="overflow-y-auto overflow-x-hidden h-full">
-          
-          {/* Grid layout */}
-          <div className="grid md:grid-cols-[1fr_400px] gap-0"> 
-          
-            {/* VÄNSTER KOLUMN: Carousel - ABSOLUT FAST HÖJD */}
-           {/* VÄNSTER KOLUMN */}
-<div className="relative p-4 md:p-6 flex-shrink-0">
-  <div className="w-full aspect-[3/4] max-h-[800px] mx-auto md:max-h-[800px]">
-    {profile.photo_urls && profile.photo_urls.length > 0 ? (
-      <PhotoCarousel urls={profile.photo_urls} name={name} />
-    ) : (
-      <div className="w-full h-full flex items-center justify-center bg-muted rounded-lg">
-        <User className="w-20 h-20 text-muted-foreground" />
+        {/* Header sektion */}
+        <div className="p-6 pb-4">
+  <DialogHeader className="space-y-4">
+    <div className="flex  justify-between items-start gap-4">
+      
+      <div className="flex flex-col items-start space-y-4 flex-1 min-w-0"> {/* min-w-0 behövs för att text-wrap ska fungera i flex */}
+        <DialogTitle className="text-3xl md:text-4xl font-extrabold leading-tight break-words text-black">
+          {name}
+        </DialogTitle>
+        <div className="">
+        <p className="text-md md:text-2xl font-medium text-gray-600 mt-1">
+          {age} år
+        </p>
+        </div>
       </div>
-    )}
-  </div>
+
+      {/* Like-knapp sektion */}
+     
+    </div>
+
+    {/* Avstånd/Location */}
+    <div className="flex items-center gap-1.5 text-muted-foreground bg-gray-50 self-start px-3 py-1 rounded-full border border-gray-100">
+      <svg className="w-4 h-4 text-brand-500" fill="currentColor" viewBox="0 0 20 20">
+        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+      </svg>
+      <span className="text-sm font-medium">2 miles away</span>
+    </div>
+  </DialogHeader>
 </div>
 
+        {/* Scrollable content area */}
+        <div className="flex-1 overflow-y-auto">
 
-            {/* HÖGER KOLUMN: Information */}
-            <div className="p-4 md:p-6 space-y-6 md:border-l md:border-gray-400">
-              <DialogHeader>
-                <DialogTitle className="text-3xl font-extrabold flex justify-between items-center">
-                  {name}, {age}
-                  <Button variant="outline" size="icon" className="rounded-full h-10 w-10 border-red-500 text-red-500 hover:text-red-600 hover:bg-red-50">
-                      <Heart className="h-5 w-5" />
+          {/* Like */}
+          <section className="px-6 py-5 border-t border-gray-100">
+             <div className=" flex items-center space-x-4 flex-shrink-0">
+                  <Button 
+                  onClick={handleLike} 
+                    size="lg"
+                    className="rounded-full h-14 w-14 bg-gradient-to-br from-brand-500 to-rose-400 hover:scale-110 transition-transform shadow-lg border-none"
+                  >
+                    <Heart className="h-7 w-7 text-white fill-current" />
                   </Button>
-                </DialogTitle>
-              </DialogHeader>
 
-              <div className="space-y-10">
-                <section>
-                  <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-2"><User className="w-4 h-4" /> Om mig</h4>
-                  <p className="text-sm leading-relaxed">{profile.about_you?.bio || "Ingen beskrivning ännu."}</p>
-                </section>
+                  <p className="text-md text-rose-500 text-gray-600 mt-2">Like this profile</p>
+              </div>
+            
+          </section>
+          
+          {/* ABOUT ME sektion */}
+          <section className="px-6 py-5 border-t border-gray-100">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-700 mb-3">
+              ABOUT ME
+            </h4>
+            <p className="text-sm leading-relaxed text-gray-800">
+              {profile.about_you?.bio || "Ingen beskrivning ännu."}
+            </p>
+          </section>
 
-                {interestsArray.length > 0 && (
-                  <section>
-                    <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-2"><Heart className="w-4 h-4" /> Intressen</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {interestsArray.map((interest: string) => (
-                        <Badge key={interest} variant="secondary" className="px-5 py-2 rounded-full bg-brand-300">
-                          {interest}
-                        </Badge>
-                      ))}
-                    </div>
-                  </section>
-                )}
-                
-                <section className="bg-gray-50 px-2 py-2">
-                  <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-2">Dealbreakers</h4>
-                  <div className="text-sm space-y-1">
-                      <p>Rökning: {profile.dealbreakers_lifestyle?.smoking || 'Oklart'}</p>
-                      <p>Barn: {profile.dealbreakers_lifestyle?.children || 'Oklart'}</p>
-                  </div>
-                </section>
+          {/* INTERESTS sektion */}
+          {interestsArray.length > 0 && (
+            <section className="px-6 py-5 border-t border-gray-100">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-700 mb-3">
+                INTERESTS
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {interestsArray.map((interest: string) => (
+                  <Badge 
+                    key={interest} 
+                    className="px-4 py-1.5 rounded-full text-sm font-medium bg-gradient-to-r from-pink-500 to-purple-500 text-white border-0"
+                  >
+                    {interest}
+                  </Badge>
+                ))}
+              </div>
+            </section>
+          )}
 
+          {/* DETAILS sektion */}
+          <section className="px-6 py-5 border-t border-gray-100">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-700 mb-3">
+              DETAILS
+            </h4>
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-2.5 text-sm text-gray-800">
+                <svg className="w-5 h-5 text-pink-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                </svg>
+                <span>Marketing Professional</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-sm text-gray-800">
+                <svg className="w-5 h-5 text-pink-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd"/>
+                </svg>
+                <span>Looking for: Long-term relationship</span>
               </div>
             </div>
-          </div>
-        </div>
-      </DialogContent>
+          </section>
 
- 
-    </Dialog>
+          {/* Dealbreakers sektion (optional) */}
+          {(profile.dealbreakers_lifestyle?.smoking || profile.dealbreakers_lifestyle?.children) && (
+            <section className="px-6 py-5 border-t border-gray-100">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-700 mb-3">
+                DEALBREAKERS
+              </h4>
+              <div className="space-y-2 text-sm text-gray-800">
+                {profile.dealbreakers_lifestyle?.smoking && (
+                  <p>Rökning: {profile.dealbreakers_lifestyle.smoking}</p>
+                )}
+                {profile.dealbreakers_lifestyle?.children && (
+                  <p>Barn: {profile.dealbreakers_lifestyle.children}</p>
+                )}
+              </div>
+            </section>
+          )}
+
+        </div>
+
+        {/* Footer med Send Message knapp */}
+        <div className="p-6 pt-4 border-t border-gray-100 bg-gradient-to-r from-brand-500 to-pink-500">
+          <div className="mb-3">
+            <p className="text-white text-sm font-medium flex items-center gap-2">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+              </svg>
+              Send Instant Message
+            </p>
+          </div>
+          <Button 
+            variant="outline" 
+            className="w-full bg-white text-brand-600 hover:bg-gray-50 font-semibold py-6 rounded-full border-0 text-base"
+          >
+            Send Message
+            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </Button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</DialogContent>
+</Dialog>
+
+<MatchModal 
+      isOpen={showMatchModal}
+      onClose={() => setShowMatchModal(false)}
+      currentUserPhoto={currentUserPhoto} // Din egen bild (från auth/context)
+      matchedUserPhoto={profile.photo_urls[0]} // Den andras bild
+      matchedUserName={name}
+      onSendMessage={onSendMessage}
+      
+    />
+
+</>
+
+
   )
 }
 
@@ -218,5 +387,8 @@ const PhotoCarousel = ({ urls, name }: { urls: string[], name: string }) => {
         ))}
       </div>
     </div>
+
+    
+    
     )
 }
