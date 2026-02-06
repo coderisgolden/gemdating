@@ -70,7 +70,7 @@ export function DealbreakersLifestyleStep({
         ].join(' ')}
       >
         {showError && !isValid && (
-          <p className="text-sm text-red-500">
+          <p className="text-md text-red-500">
             Please select at least one preference before continuing.
           </p>
         )}

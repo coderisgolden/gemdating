@@ -47,19 +47,22 @@ export function MatchPreferencesV2Step({
 }: MatchPreferencesV2StepProps) {
   const [showError, setShowError] = useState(false)
 
-  const isValid =
-    !!values.ageRange ||
-    !!values.distance ||
-    !!values.interestedIn ||
-    values.relationshipTypes.length > 0 ||
-    !!values.education ||
-    !!values.lifestyle ||
-    values.interests.length > 0 ||
-    !!values.religion ||
-    !!values.smoking ||
-    !!values.drinking ||
-    !!values.children ||
-    !!values.notes
+  // const isValid =
+  //   !!values.ageRange ||
+  //   !!values.distance ||
+  //   !!values.interestedIn ||
+  //   values.relationshipTypes.length > 0 ||
+  //   !!values.education ||
+  //   !!values.lifestyle ||
+  //   values.interests.length > 0 ||
+  //   !!values.religion ||
+  //   !!values.smoking ||
+  //   !!values.drinking ||
+  //   !!values.children ||
+  //   !!values.notes
+
+const isValid = !!values.interestedIn
+  
 
   function handleNext() {
     if (!isValid) {
@@ -95,8 +98,8 @@ export function MatchPreferencesV2Step({
         ].join(' ')}
       >
         {showError && !isValid && (
-          <p className="text-sm text-red-500">
-            Please select at least one preference before continuing.
+          <p className="text-md text-red-500">
+            Please select if you are interested in women, men, or anyone.
           </p>
         )}
 

@@ -6,6 +6,9 @@ import OnboardingPage from "./pages/OnboardingPage" // Importera din nya sida
 import AppLayout from "./components/AppLayout"
 import { SplashScreen } from "./components/splashscreen"
 import { ChatPage } from './pages/ChatPage';
+import { PricingPage } from "./pages/PricingPage"
+
+
 
 function Guard({ children }: { children: React.ReactNode }) {
   const { user, profile, loading } = useAuth()
@@ -30,7 +33,7 @@ export default function App() {
        <Routes>
         {/* Publik */}
           <Route path="/" element={<AuthPage />} />
-
+          <Route path="/pricing" element={<PricingPage />} />
         {/* 2. ONBOARDING (Guard finns, men ingen navbar layout) */}
   <Route path="/onboarding" element={
       <Guard>

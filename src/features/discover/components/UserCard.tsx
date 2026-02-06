@@ -304,6 +304,7 @@ const onSendMessage = () => {
           <Button 
             variant="outline" 
             className="w-full bg-white text-brand-600 hover:bg-gray-50 font-semibold py-6 rounded-full border-0 text-base"
+            onClick={() => navigate("/pricing")} // Navigera till betalningssidan
           >
             Send Message
             <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

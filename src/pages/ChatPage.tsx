@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -7,13 +7,17 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Send, MessageSquare } from 'lucide-react'
 
+
 export function ChatPage() {
   const { user } = useAuth()
   const [matches, setMatches] = useState<any[]>([])
   const [selectedMatch, setSelectedMatch] = useState<any>(null)
   const [messages, setMessages] = useState<any[]>([])
   const [newMessage, setNewMessage] = useState('')
-
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const scrollToBottom = () => {
+  messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+}
   // 1. Hämta alla matcher
   useEffect(() => {
     async function loadMatches() {
@@ -50,9 +54,19 @@ if (data) {
     loadMatches()
   }, [user])
 
+
+  useEffect(() => {
+  scrollToBottom()
+}, [messages, selectedMatch])
+
+
+
+
+
+
   // 2. Hämta meddelanden när en match väljs + Realtime
   useEffect(() => {
-    if (!selectedMatch) return
+    if (!selectedMatch || !user?.id) return;
 
     const fetchMessages = async () => {
       const { data } = await supabase
@@ -77,6 +91,30 @@ if (data) {
     return () => { supabase.removeChannel(channel) }
   }, [selectedMatch])
 
+
+
+
+  useEffect(() => {
+  // Om ingen match är vald eller vi inte vet vem användaren är, avbryt
+  if (!selectedMatch || !user) return;
+
+  const markAsRead = async () => {
+    const { error } = await supabase
+      .from('messages')
+      .update({ is_read: true }) // Sätt till läst
+      .eq('match_id', selectedMatch.matchId) // För just denna chatt
+      .eq('is_read', false) // Bara de som inte redan är lästa
+      .neq('sender_id', user.id); // Och som skickats av den ANDRA personen
+
+    if (error) console.error("Kunde inte markera som läst:", error);
+  };
+
+  markAsRead();
+}, [selectedMatch, user?.id]); // Körs varje gång du byter person i chatten
+
+
+
+
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newMessage.trim() || !selectedMatch) return
@@ -100,6 +138,7 @@ if (data) {
           <h2 className="text-xl font-bold">Meddelanden</h2>
         </div>
         <ScrollArea className="flex-1">
+          
           {matches.map((m) => (
             <div 
               key={m.matchId}
@@ -131,6 +170,7 @@ if (data) {
             </div>
 
             <ScrollArea className="flex-1 p-4 space-y-4">
+              <div className="space-y-4"> 
               {messages.map((msg) => (
                 <div key={msg.id} className={`flex ${msg.sender_id === user?.id ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[70%] px-4 py-2 rounded-2xl ${msg.sender_id === user?.id ? 'bg-brand-500 text-white rounded-tr-none' : 'bg-gray-100 text-gray-800 rounded-tl-none'}`}>
@@ -138,6 +178,8 @@ if (data) {
                   </div>
                 </div>
               ))}
+              <div ref={messagesEndRef} />
+              </div>
             </ScrollArea>
 
             <form onSubmit={sendMessage} className="p-4 border-t flex gap-2">

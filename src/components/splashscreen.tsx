@@ -1,27 +1,17 @@
+import { Heart, } from "lucide-react"
+
 export function SplashScreen() {
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center bg-gray-600">
-      <div className="relative flex items-center justify-center">
-        <div className="absolute h-16 w-16 animate-ping rounded-full bg-primary/20" />
-        <div className="relative h-12 w-12 text-primary">
-          {/* Din ikon/logga här */}
-          <svg
-            xmlns="http://www.w3.org"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-full w-full"
-          >
-            <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
-          </svg>
-        </div>
+    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white">
+      {/* Logga eller Spinner */}
+      <div className="relative">
+        <div className="h-16 w-16 animate-spin rounded-full border-4 border-gray-200 border-t-brand-500" />
+        <Heart className="absolute inset-0 m-auto h-6 w-6 text-brand-500 animate-pulse" />
       </div>
-      <p className="mt-4 text-sm font-medium text-muted-foreground animate-pulse">
-        Laddar...
-      </p>
+      
+      <h2 className="mt-4 text-xl font-bold bg-gradient-to-r from-brand-500 to-rose-400 bg-clip-text text-transparent italic">
+        MatchApp
+      </h2>
     </div>
   )
 }
