@@ -43,7 +43,7 @@ export default function AuthPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     setLoading(false)
     if (error) return setError(error.message)
-    // navigate("/app")
+    navigate("/app")
   }
 
   const handleSignup = async () => {
@@ -52,7 +52,7 @@ export default function AuthPage() {
     const { error } = await supabase.auth.signUp({ email, password })
     setLoading(false)
     if (error) return setError(error.message)
-    // navigate("/app")
+    navigate("/app")
   }
 
   // const handleGoogleLogin = async () => {
@@ -69,7 +69,7 @@ export default function AuthPage() {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: window.location.origin
+      redirectTo: `${window.location.origin}/app`
     }
   })
   if (error) setError(error.message)
