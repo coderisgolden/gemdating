@@ -17,22 +17,25 @@ export default function AuthPage() {
 
 
    useEffect(() => {
+ 
+  if (window.location.pathname !== "/") return
+
   supabase.auth.getSession().then(({ data: { session } }) => {
-    if (session && window.location.pathname !== "/app") {
+    if (session) {
       navigate("/app")
     }
   })
 
-  const { data: { subscription } } =
-    supabase.auth.onAuthStateChange((_event, session) => {
-      if (session && window.location.pathname !== "/app") {
-        navigate("/app")
-      }
-    })
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((_event, session) => {
+    if (session) {
+      navigate("/app")
+    }
+  })
 
   return () => subscription.unsubscribe()
 }, [navigate])
-
 
   const handleLogin = async () => {
     setLoading(true)
