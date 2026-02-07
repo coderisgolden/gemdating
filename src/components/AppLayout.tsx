@@ -37,7 +37,7 @@ const [hasNewLikes, setHasNewLikes] = useState(false);
   const location = useLocation()
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    navigate("/")
+    window.location.href = import.meta.env.VITE_LANDING_URL
   }
   // Hämta första bokstaven i e-posten för avataren
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U"
