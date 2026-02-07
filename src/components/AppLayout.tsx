@@ -43,14 +43,19 @@ const [hasNewLikes, setHasNewLikes] = useState(false);
   // }
 
   const handleLogout = async () => {
-  await supabase.auth.signOut()
-
   const landing =
     import.meta.env.VITE_LANDING_URL?.replace(/\/+$/, "") ||
     "https://gemdating.vercel.app"
 
-  window.location.href = landing
+  // Redirecta DIREKT – innan React hinner rerendra
+  window.location.replace(landing)
+
+  // Logga ut i bakgrunden
+  await supabase.auth.signOut()
 }
+
+
+
   // Hämta första bokstaven i e-posten för avataren
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U"
   const [unreadCount, setUnreadCount] = useState(0)
