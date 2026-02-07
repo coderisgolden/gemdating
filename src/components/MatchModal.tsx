@@ -1,8 +1,7 @@
-import React from 'react'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Heart, MessageCircle, X } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { Heart, MessageCircle } from 'lucide-react'
+import { motion} from 'framer-motion'
 
 interface MatchModalProps {
   isOpen: boolean

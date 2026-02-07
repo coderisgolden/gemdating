@@ -1,5 +1,4 @@
-import React from 'react'
-import { Check, Sparkles, Zap, ShieldCheck, Heart } from 'lucide-react'
+import { Check, Sparkles, Zap, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'

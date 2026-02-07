@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { OnboardingLayout } from '../components/OnboardingLayout'
-import { Button } from '@/components/ui/button'
+
 import { Label } from '@/components/ui/label'
-import { Check, Sparkles, Upload, X } from 'lucide-react'
+import { Check, Upload, X } from 'lucide-react'
 // VIKTIGT: Vi importerar verktygen från din andra fil
 import { CropModal, getCroppedImg } from '@/components/ImageCropper'
 import type { Area } from 'react-easy-crop'
@@ -21,7 +21,6 @@ export function PhotoUploadStep({
   onFilesSelected,
   onSave,
   onBack,
-  onUpgrade,
   onRemoveFile,
 }: PhotoUploadStepProps) {
   const [error, setError] = useState<string | null>(null)

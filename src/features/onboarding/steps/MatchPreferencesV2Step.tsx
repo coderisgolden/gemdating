@@ -15,7 +15,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Heart, User, Sparkles, Smile, MessageCircle } from 'lucide-react'
+import { User, Sparkles, Smile, MessageCircle } from 'lucide-react'
 
 export type MatchPreferencesV2Values = {
   ageRange?: string

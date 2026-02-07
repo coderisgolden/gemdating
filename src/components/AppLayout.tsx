@@ -6,7 +6,7 @@ import {
   MessageSquare, 
   Search, 
   LogOut, 
-  User as UserIcon,
+  
   Heart
 } from "lucide-react"
 import {

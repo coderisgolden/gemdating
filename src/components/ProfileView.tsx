@@ -1,4 +1,4 @@
-import { Heart, MapPin, Loader2 } from "lucide-react"
+import { Heart, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 // import { Badge } from "@/components/ui/badge"
 import { PhotoCarousel } from "./PhotoCarousel.tsx"

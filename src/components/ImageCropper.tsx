@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-// Här lägger vi till 'type' före Area för att fixa ditt fel
+import  { useState } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
 import { Button } from '@/components/ui/button'

@@ -66,7 +66,7 @@ const INITIAL_DATA: OnboardingData = {
 export function OnboardingStepController() {
   // const navigate = useNavigate()
   // const { refreshProfile } = useAuth()
-  const { user, refreshProfile } = useAuth()
+  const { refreshProfile } = useAuth()
   const navigate = useNavigate()
   const [step, setStep] = useState<OnboardingStep>(
     OnboardingStep.Interests
