@@ -17,22 +17,22 @@ export default function AuthPage() {
 
 
    useEffect(() => {
-    // 1. Check if a session already exists (on page load)
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (session && window.location.pathname !== "/app") {
+      navigate("/app")
+    }
+  })
+
+  const { data: { subscription } } =
+    supabase.auth.onAuthStateChange((_event, session) => {
+      if (session && window.location.pathname !== "/app") {
         navigate("/app")
       }
     })
 
-    // 2. Listen for the "SIGNED_IN" event (triggered by the Google redirect)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        navigate("/app")
-      }
-    })
+  return () => subscription.unsubscribe()
+}, [navigate])
 
-    return () => subscription.unsubscribe()
-  }, [navigate])
 
   const handleLogin = async () => {
     setLoading(true)
