@@ -24,26 +24,59 @@ import { LikesPage } from "./pages/LikesPage"
 // }
 
 
+// function Guard({ children }: { children: React.ReactNode }) {
+//   const { user, profile, loading } = useAuth()
+//   const location = useLocation()
+
+//   if (loading) return <SplashScreen />
+  
+//   // 1. Not logged in? Send to Landing/Auth
+//   if (!user) return <Navigate to="/" replace />
+
+//   // 2. Logged in but NO profile yet (New Google User) OR Onboarding not finished?
+//   // We check if they are NOT already on the onboarding page to avoid infinite loops.
+//   const isNotOnboarded = !profile || !profile.onboarding_complete;
+  
+//   if (isNotOnboarded && location.pathname !== "/onboarding") {
+//     return <Navigate to="/onboarding" replace />
+//   }
+
+ 
+//   return <>{children}</>
+// }
+
+
 function Guard({ children }: { children: React.ReactNode }) {
   const { user, profile, loading } = useAuth()
   const location = useLocation()
 
+  // 1. Om vi fortfarande hämtar auth-status, visa splash
   if (loading) return <SplashScreen />
   
-  // 1. Not logged in? Send to Landing/Auth
+  // 2. Om ingen användare är inloggad, skicka till login
   if (!user) return <Navigate to="/" replace />
 
-  // 2. Logged in but NO profile yet (New Google User) OR Onboarding not finished?
-  // We check if they are NOT already on the onboarding page to avoid infinite loops.
-  const isNotOnboarded = !profile || !profile.onboarding_complete;
+  // 3. SPECIALKOLL FÖR ONBOARDING:
+  // Vi kollar om användaren faktiskt är på onboarding-sidan just nu.
+  const isOnOnboardingPage = location.pathname === "/onboarding";
+
+  // Om profilen saknas (ny Google-user) eller inte är klar:
+  const isNotOnboarded = !profile || profile.onboarding_complete === false;
   
-  if (isNotOnboarded && location.pathname !== "/onboarding") {
+  if (isNotOnboarded && !isOnOnboardingPage) {
+    // Skicka till onboarding om de inte redan är där
     return <Navigate to="/onboarding" replace />
   }
 
-  // 3. User is logged in and fully onboarded
+  // 4. Om de ÄR på onboarding men faktiskt är klara (t.ex. tryckt på back-knappen)
+  if (profile?.onboarding_complete && isOnOnboardingPage) {
+    return <Navigate to="/app" replace />
+  }
+
   return <>{children}</>
 }
+
+
 
 // function PageWrapper({ children }: { children: React.ReactNode }) {
 //   return <div className="animate-fade-in">{children}</div>

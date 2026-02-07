@@ -29,14 +29,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .upsert({ id: userId }, { onConflict: 'id' })
+        .upsert({ id: userId }, { onConflict: 'id' }) // This creates the row for Google users!
         .select("onboarding_complete")
         .single()
       
       if (error) throw error
-      if (data) setProfile(data)
+      setProfile(data) // Set even if data is null
     } catch (err) {
       console.error("Error in fetchProfile:", err)
+      setProfile(null) // Crucial: ensure profile isn't "undefined"
+    } finally {
+      // If you call this from within initializeAuth, 
+      // make sure loading is handled there or here.
     }
   }
 
@@ -47,27 +51,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  useEffect(() => {
-  let isMounted = true
+   useEffect(() => {
+    let isMounted = true
 
-  // 1. Initial kontroll vid start
-  const initializeAuth = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
-    
-    if (!isMounted) return
-    
-    const currentUser = session?.user ?? null
-    setUser(currentUser)
-    
-    if (currentUser) {
-      // VIKTIGT: Vi väntar (await) på profilen HÄR innan vi sätter loading(false)
-      // Detta stoppar blinket vid siduppdatering/start
-      await fetchProfile(currentUser.id)
+    const initializeAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!isMounted) return
+
+        const currentUser = session?.user ?? null
+        setUser(currentUser)
+        
+        if (currentUser) {
+          await fetchProfile(currentUser.id)
+        }
+      } catch (err) {
+        console.error("Init error:", err)
+      } finally {
+        if (isMounted) setLoading(false) // 👈 THIS is the most important line
+      }
     }
-    
-    setLoading(false)
-  }
-
   initializeAuth()
 
   // 2. Lyssna på auth-förändringar
