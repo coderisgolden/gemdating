@@ -35,10 +35,22 @@ const [hasNewLikes, setHasNewLikes] = useState(false);
   const { user } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+
+
+  // const handleLogout = async () => {
+  //   await supabase.auth.signOut()
+  //   window.location.href = import.meta.env.VITE_LANDING_URL
+  // }
+
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    window.location.href = import.meta.env.VITE_LANDING_URL
-  }
+  await supabase.auth.signOut()
+
+  const landing =
+    import.meta.env.VITE_LANDING_URL?.replace(/\/+$/, "") ||
+    "https://gemdating.vercel.app"
+
+  window.location.href = landing
+}
   // Hämta första bokstaven i e-posten för avataren
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U"
   const [unreadCount, setUnreadCount] = useState(0)
