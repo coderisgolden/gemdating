@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { supabase } from "../lib/supabase"
 import { Button } from "@/components/ui/button"
@@ -14,13 +15,32 @@ export default function AuthPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
+
+   useEffect(() => {
+    // 1. Check if a session already exists (on page load)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        navigate("/app")
+      }
+    })
+
+    // 2. Listen for the "SIGNED_IN" event (triggered by the Google redirect)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        navigate("/app")
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [navigate])
+
   const handleLogin = async () => {
     setLoading(true)
     setError(null)
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     setLoading(false)
     if (error) return setError(error.message)
-    navigate("/app")
+    // navigate("/app")
   }
 
   const handleSignup = async () => {
@@ -29,7 +49,7 @@ export default function AuthPage() {
     const { error } = await supabase.auth.signUp({ email, password })
     setLoading(false)
     if (error) return setError(error.message)
-    navigate("/app")
+    // navigate("/app")
   }
 
   // const handleGoogleLogin = async () => {
