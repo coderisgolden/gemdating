@@ -29,6 +29,8 @@ interface MessagePayload {
 
 export default function AppLayout() {
 
+const [hasNewLikes, setHasNewLikes] = useState(false);
+
 
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -41,7 +43,7 @@ export default function AppLayout() {
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U"
   const [unreadCount, setUnreadCount] = useState(0)
 
-
+// REALTIME: Lyssna på nya meddelanden och uppdatera unread count
   useEffect(() => {
   if (!user) return
 
@@ -77,6 +79,43 @@ export default function AppLayout() {
 }, [user])
 
 
+
+// REALTIME: Lyssna på nya likes och uppdatera hasNewLikes
+useEffect(() => {
+  if (!user?.id) return;
+
+  // 1. Kolla om det finns några obesvarade likes när sidan laddas
+  const checkLikes = async () => {
+    const { data } = await supabase
+      .from('likes')
+      .select('id')
+      .eq('to_user_id', user.id)
+      .is('is_matched', false) // Bara de som inte matchat än
+      .limit(1);
+    
+    if (data && data.length > 0) setHasNewLikes(true);
+  };
+  checkLikes();
+
+  // 2. Lyssna live på när NYA likes trillar in
+  const likesChannel = supabase
+    .channel('navbar-likes')
+    .on('postgres_changes', 
+      { event: 'INSERT', schema: 'public', table: 'likes', filter: `to_user_id=eq.${user.id}` }, 
+      () => {
+        setHasNewLikes(true);
+      }
+    )
+    .subscribe();
+
+  return () => { supabase.removeChannel(likesChannel) };
+}, [user?.id]);
+
+
+
+
+
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50/30">
       {/* NAVBAR */}
@@ -105,30 +144,51 @@ export default function AppLayout() {
               </Button>
 
               <Button 
-  variant={location.pathname === "/chat" ? "secondary" : "ghost"} 
-  asChild
-  className="rounded-full gap-2 relative" 
->
-  <Link to="/chat">
-    <div className="relative">
-  <MessageSquare className="w-6 h-6" /> {/* Lite större ikon hjälper balansen */}
-  
-  {unreadCount > 0 && (
-    <div className="absolute -top-2 -right-2 flex items-center justify-center">
-      {/* Pingen ligger underst */}
-      <span className="animate-ping absolute h-full w-full rounded-full bg-red-400 opacity-75"></span>
-      
-      {/* Siffran ligger överst - VIKTIGT med flex och leading-none */}
-      <span className="relative flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[11px] font-bold text-white border-2 border-white leading-none">
-        {unreadCount > 9 ? '9' : unreadCount}
-      </span>
-    </div>
-  )}
-</div>
+                  variant={location.pathname === "/chat" ? "secondary" : "ghost"} 
+                  asChild
+                  className="rounded-full gap-2 relative" 
+                >
+                  <Link to="/chat">
+                    <div className="relative">
+                  <MessageSquare className="w-6 h-6" /> {/* Lite större ikon hjälper balansen */}
+                  
+                  {unreadCount > 0 && (
+                    <div className="absolute -top-2 -right-2 flex items-center justify-center">
+                      {/* Pingen ligger underst */}
+                      <span className="animate-ping absolute h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      
+                      {/* Siffran ligger överst - VIKTIGT med flex och leading-none */}
+                      <span className="relative flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[11px] font-bold text-white border-2 border-white leading-none">
+                        {unreadCount > 9 ? '9' : unreadCount}
+                      </span>
+                    </div>
+                  )}
+                </div>
 
-    <span className="hidden sm:block font-medium">Chat</span>
-  </Link>
-</Button>
+                    <span className="hidden sm:block font-medium">Chat</span>
+                  </Link>
+            </Button>
+
+            <Button 
+                variant={location.pathname === "/likes" ? "secondary" : "ghost"} 
+                asChild
+                className="rounded-full gap-2 relative" 
+              >
+                <Link to="/likes" onClick={() => setHasNewLikes(false)}> {/* Nollställ vid klick */}
+                  <div className="relative">
+                    <Heart className="w-6 h-6 text-brand-500" /> 
+                    
+                    {hasNewLikes && (
+                      <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                        <span className="animate-ping absolute h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border border-white shadow-sm"></span>
+                      </span>
+                    )}
+                  </div>
+                  <span className="hidden sm:block font-medium">Likes</span>
+                </Link>
+          </Button>
+
 
             </div>
           </div>

@@ -2,7 +2,7 @@ import { OnboardingStepController } from '@/features/onboarding/OnboardingStepCo
 
 export default function OnboardingPage() {
   return (
-    <main className="min-h-screen bg-brand-50">
+    <main className="min-h-screen">
       <OnboardingStepController />
     </main>
   )
