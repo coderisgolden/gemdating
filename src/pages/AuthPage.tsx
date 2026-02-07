@@ -32,15 +32,25 @@ export default function AuthPage() {
     navigate("/app")
   }
 
+  // const handleGoogleLogin = async () => {
+  //   const { error } = await supabase.auth.signInWithOAuth({
+  //     provider: 'google',
+  //     options: {
+  //       redirectTo: `${window.location.origin}/app`
+  //     }
+  //   })
+  //   if (error) setError(error.message)
+  // }
+
   const handleGoogleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/app`
-      }
-    })
-    if (error) setError(error.message)
-  }
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.origin
+    }
+  })
+  if (error) setError(error.message)
+}
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50/30 p-4">
