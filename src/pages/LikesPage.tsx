@@ -17,7 +17,7 @@ export function LikesPage() {
   // States
   const [likes, setLikes] = useState<any[]>([])
   const [selectedProfile, setSelectedProfile] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+  // const [, setLoading] = useState(true)
   const [showMatchModal, setShowMatchModal] = useState(false)
   const [matchData, setMatchData] = useState<any>(null)
   const [myPhoto, setMyPhoto] = useState<string | null>(null);
@@ -39,12 +39,15 @@ export function LikesPage() {
 
       if (error) {
         console.error("Error fetching likes:", error)
-      } else if (data) {
+        return
+      } 
+      
+      else if (data) {
         const profiles = data.map(item => item.profile).filter(Boolean)
         setLikes(profiles)
         if (profiles.length > 0) setSelectedProfile(profiles[0])
       }
-      setLoading(false)
+      // setLoading(false)
     }
 
     loadLikes()
