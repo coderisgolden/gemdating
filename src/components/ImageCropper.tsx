@@ -53,7 +53,7 @@ export function CropModal({ image, onCropComplete, onCancel }: CropModalProps) {
     <Dialog open={!!image} onOpenChange={onCancel}>
       <DialogContent className="max-w-[600px] h-[700px] flex flex-col p-0 overflow-hidden bg-white">
         <DialogHeader className="p-4 border-b text-black">
-          <DialogTitle>Beskär din bild (3:2)</DialogTitle>
+          <DialogTitle>Crop your image (3:2)</DialogTitle>
         </DialogHeader>
         
         <div className="relative flex-1 bg-[#333]">
@@ -87,7 +87,7 @@ export function CropModal({ image, onCropComplete, onCancel }: CropModalProps) {
               onClick={() => croppedAreaPixels && onCropComplete(croppedAreaPixels)} 
               className="flex-1 bg-brand-500 text-white hover:bg-brand-600"
             >
-              Spara beskärning
+              Save crop
             </Button>
           </DialogFooter>
         </div>

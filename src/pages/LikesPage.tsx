@@ -127,7 +127,7 @@ const handleLikeBack = async (targetId: string) => {
 
 
 
-  if (loading) return <div className="h-full flex items-center justify-center">Loading your likes...</div>
+  // if (loading) return <div className="h-full flex items-center justify-center"></div>
 
   if (likes.length === 0) {
     return (

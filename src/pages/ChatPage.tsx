@@ -135,7 +135,7 @@ if (data) {
       {/* VÄNSTER: Match-lista */}
       <div className="w-80 border-r flex flex-col bg-gray-50/50">
         <div className="p-4 border-b bg-white">
-          <h2 className="text-xl font-bold">Meddelanden</h2>
+          <h2 className="text-xl font-bold">Messages</h2>
         </div>
         <ScrollArea className="flex-1">
           
@@ -151,7 +151,7 @@ if (data) {
               </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold truncate">{m.about_you?.name}</p>
-                <p className="text-xs text-gray-500 truncate">Klicka för att chatta</p>
+                <p className="text-xs text-gray-500 truncate">Click to chat</p>
               </div>
             </div>
           ))}
@@ -197,7 +197,7 @@ if (data) {
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-8">
             <MessageSquare className="h-12 w-12 mb-4 opacity-20" />
-            <p>Välj en matchning för att börja chatta</p>
+            <p>Select a match to start chatting</p>
           </div>
         )}
       </div>

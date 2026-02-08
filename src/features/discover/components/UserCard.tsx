@@ -183,7 +183,7 @@ const onSendMessage = () => {
         </DialogTitle>
         <div className="">
         <p className="text-md md:text-2xl font-medium text-gray-600 mt-1">
-          {age} år
+          {age} years old
         </p>
         </div>
       </div>
@@ -279,10 +279,10 @@ const onSendMessage = () => {
               </h4>
               <div className="space-y-2 text-sm text-gray-800">
                 {profile.dealbreakers_lifestyle?.smoking && (
-                  <p>Rökning: {profile.dealbreakers_lifestyle.smoking}</p>
+                  <p>Smoking: {profile.dealbreakers_lifestyle.smoking}</p>
                 )}
                 {profile.dealbreakers_lifestyle?.children && (
-                  <p>Barn: {profile.dealbreakers_lifestyle.children}</p>
+                  <p>Children: {profile.dealbreakers_lifestyle.children}</p>
                 )}
               </div>
             </section>

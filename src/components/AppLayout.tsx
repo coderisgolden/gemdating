@@ -247,16 +247,16 @@ useEffect(() => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => navigate("/app")}>
                   <Search className="mr-2 h-4 w-4" />
-                  <span>Hitta Matcher</span>
+                  <span>Find Matches</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate("/chat")}>
                   <MessageSquare className="mr-2 h-4 w-4" />
-                  <span>Mina Chatts</span>
+                  <span>My Chats</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600">
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Logga ut</span>
+                  <span>Log out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

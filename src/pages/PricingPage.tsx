@@ -6,50 +6,50 @@ import { Badge } from '@/components/ui/badge'
 const tiers = [
   {
     name: 'Free',
-    price: '0 kr',
-    description: 'Perfekt för att börja utforska.',
+    price: '0 usd',
+    description: 'Perfect to start exploring.',
     features: [
-      'Se 10 profiler per dag',
-      'Matcha och chatta gratis',
-      'Ladda upp 3 bilder',
+      'See 10 profiles per day',
+      'Match and chat for free',
+      'Upload 3 photos',
     ],
     notIncluded: [
-      'Direktmeddelanden utan match',
-      'Se vem som gillar dig',
-      'Prioriterad synlighet',
+      'Direct messages without matching',
+      'See who likes you',
+      'Priority visibility',
     ],
-    buttonText: 'Fortsätt gratis',
+    buttonText: 'Continue for free',
     highlight: false,
   },
   {
     name: 'Premium',
-    price: '149 kr',
-    period: '/månad',
-    description: 'Vårt mest populära val för seriösa dejtare.',
+    price: '15 usd',
+    period: '/month',
+    description: 'Our most popular choice for serious daters.',
     features: [
-      'Obegränsat med profilvisningar',
-      '5 Direktmeddelanden per dag (utan match)',
-      'Se alla som gillar dig',
-      'Ingen reklam',
-      'Ladda upp 10 bilder',
+      'Unlimited profile views',
+      '5 Direct messages per day (without matching)',
+      'See all who likes you',
+      'No ads',
+      'Upload 10 photos',
     ],
-    buttonText: 'Skaffa Premium',
+    buttonText: 'Get Premium',
     highlight: true,
-    badge: 'Mest populär',
+    badge: 'Most popular',
   },
   {
     name: 'Elite',
-    price: '299 kr',
-    period: '/månad',
-    description: 'För dig som vill ha det absolut bästa.',
+    price: '50 usd',
+    period: '/month',
+    description: 'For you who want the absolute best.',
     features: [
-      'Allt i Premium',
-      'Obegränsat med Direktmeddelanden',
-      'Top-placering i andras flöden',
-      'Verifierad Elite-badge på profilen',
-      'Personlig profil-coach',
+      'Everything in Premium',
+      'Unlimited direct messages',
+      'Top placement in others’ feeds',
+      'Verified Elite badge on profile',
+      'Personal profile coach',
     ],
-    buttonText: 'Bli Elite',
+    buttonText: 'Become Elite',
     highlight: false,
   },
 ]
@@ -58,12 +58,11 @@ export function PricingPage() {
   return (
     <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div className="text-center mb-16">
-        <h2 className="text-base font-semibold text-brand-600 uppercase tracking-wide">Medlemskap</h2>
+        <h2 className="text-base font-semibold text-brand-600 uppercase tracking-wide">Membership</h2>
         <p className="mt-2 text-4xl font-extrabold text-gray-900 sm:text-5xl">
-          Hitta din perfekta match snabbare
-        </p>
+           Find your perfect match faster </p>
         <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-500">
-          Välj den nivå som passar dina behov och börja skicka meddelanden direkt.
+          Choose the level that suits your needs and start sending messages right away.
         </p>
       </div>
 
@@ -132,15 +131,15 @@ export function PricingPage() {
       <div className="mt-20 flex flex-wrap justify-center gap-12 text-center grayscale opacity-50">
         <div className="flex flex-col items-center">
           <ShieldCheck className="h-10 w-10 mb-2" />
-          <span className="text-xs font-bold uppercase tracking-widest">Säker betalning</span>
+          <span className="text-xs font-bold uppercase tracking-widest">Secure payment</span>
         </div>
         <div className="flex flex-col items-center">
           <Zap className="h-10 w-10 mb-2" />
-          <span className="text-xs font-bold uppercase tracking-widest">Snabb aktivering</span>
+          <span className="text-xs font-bold uppercase tracking-widest">Fast activation</span>
         </div>
         <div className="flex flex-col items-center">
           <Sparkles className="h-10 w-10 mb-2" />
-          <span className="text-xs font-bold uppercase tracking-widest">Inga dolda avgifter</span>
+          <span className="text-xs font-bold uppercase tracking-widest">No hidden fees</span>
         </div>
       </div>
     </div>

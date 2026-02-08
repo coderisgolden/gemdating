@@ -35,7 +35,7 @@ export function MatchModal({
               IT'S A MATCH!
             </h2>
             <p className="text-white text-lg font-medium">
-              Du och {matchedUserName} gillar varandra.
+              You and {matchedUserName} like each other.
             </p>
           </motion.div>
 
@@ -65,7 +65,7 @@ export function MatchModal({
           {/* Knappar */}
           <div className="flex flex-col w-full gap-3 px-8">
 
-  // Annan logik här
+ 
             <Button 
   onClick={() => {
     console.log("Knapp klickad!");
@@ -74,7 +74,7 @@ export function MatchModal({
   className="bg-white text-brand-600 hover:bg-gray-100 rounded-full h-14 text-lg font-bold shadow-lg"
 >
               <MessageCircle className="mr-2 h-5 w-5" />
-              Skicka ett meddelande
+              Send a message
             </Button>
             
             <Button 
@@ -82,7 +82,7 @@ export function MatchModal({
               onClick={onClose}
               className="text-white hover:bg-white/10 rounded-full h-12"
             >
-              Fortsätt leta
+              Continue searching
             </Button>
           </div>
 
