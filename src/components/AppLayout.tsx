@@ -42,16 +42,26 @@ const [hasNewLikes, setHasNewLikes] = useState(false);
   //   window.location.href = import.meta.env.VITE_LANDING_URL
   // }
 
-  const handleLogout = async () => {
+//   const handleLogout = async () => {
+//   const landing =
+//     import.meta.env.VITE_LANDING_URL?.replace(/\/+$/, "") ||
+//     "https://gemdating.vercel.app"
+
+//   // Redirecta DIREKT – innan React hinner rerendra
+//   window.location.replace(landing)
+
+//   // Logga ut i bakgrunden
+//   await supabase.auth.signOut()
+// }
+
+const handleLogout = async () => {
+  await supabase.auth.signOut()
+
   const landing =
     import.meta.env.VITE_LANDING_URL?.replace(/\/+$/, "") ||
     "https://gemdating.vercel.app"
 
-  // Redirecta DIREKT – innan React hinner rerendra
   window.location.replace(landing)
-
-  // Logga ut i bakgrunden
-  await supabase.auth.signOut()
 }
 
 
