@@ -8,6 +8,7 @@ import { SplashScreen } from "./components/splashscreen"
 import { ChatPage } from './pages/ChatPage';
 import { PricingPage } from "./pages/PricingPage"
 import { LikesPage } from "./pages/LikesPage"
+import { supabase } from "@/lib/supabase"
 
 
 
@@ -44,6 +45,16 @@ import { LikesPage } from "./pages/LikesPage"
  
 //   return <>{children}</>
 // }
+
+supabase.auth.onAuthStateChange((_event, _session) => {
+  if (window.location.hash.includes("access_token")) {
+    window.history.replaceState(
+      null,
+      "",
+      window.location.pathname
+    )
+  }
+})
 
 
 
