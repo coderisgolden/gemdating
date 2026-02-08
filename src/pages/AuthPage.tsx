@@ -65,15 +65,16 @@ export default function AuthPage() {
   //   if (error) setError(error.message)
   // }
 
-  const handleGoogleLogin = async () => {
+const handleGoogleLogin = async () => {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: "https://gemdating.vercel.app/app"
+      redirectTo: window.location.origin
     }
   })
   if (error) setError(error.message)
 }
+
 
 
   return (

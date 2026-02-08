@@ -46,15 +46,15 @@ import { supabase } from "@/lib/supabase"
 //   return <>{children}</>
 // }
 
-supabase.auth.onAuthStateChange((_event, _session) => {
-  if (window.location.hash.includes("access_token")) {
-    window.history.replaceState(
-      null,
-      "",
-      window.location.pathname
-    )
-  }
-})
+// supabase.auth.onAuthStateChange((_event, _session) => {
+//   if (window.location.hash.includes("access_token")) {
+//     window.history.replaceState(
+//       null,
+//       "",
+//       window.location.pathname
+//     )
+//   }
+// })
 
 
 
