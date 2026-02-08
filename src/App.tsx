@@ -8,7 +8,7 @@ import { SplashScreen } from "./components/splashscreen"
 import { ChatPage } from './pages/ChatPage';
 import { PricingPage } from "./pages/PricingPage"
 import { LikesPage } from "./pages/LikesPage"
-import { supabase } from "@/lib/supabase"
+
 
 
 
