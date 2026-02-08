@@ -67,13 +67,14 @@ export default function AuthPage() {
 
   const handleGoogleLogin = async () => {
   const { error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
+    provider: "google",
     options: {
-      redirectTo: `${window.location.origin}/app`
+      redirectTo: "https://gemdating.vercel.app/app"
     }
   })
   if (error) setError(error.message)
 }
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50/30 p-4">
