@@ -44,7 +44,7 @@ export function InterestsStep({
 
       <div
   className={[
-    'grid grid-cols-2 md:grid-cols-3 gap-4 rounded-xl p-2 transition-colors',
+    'grid grid-cols-1 md:grid-cols-3 gap-4 rounded-xl p-2 transition-colors',
     error ? ' bg-red-50/30 animate-shake' : '',
   ].join(' ')}
 >
