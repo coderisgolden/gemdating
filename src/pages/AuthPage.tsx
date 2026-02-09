@@ -88,7 +88,7 @@ const handleGoogleLogin = async () => {
           </div>
           <CardTitle className="text-3xl font-extrabold tracking-tight">Welcome back</CardTitle>
           <CardDescription>
-            Enter your credentials to access your account
+            Enter credentials to access or create your account
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
@@ -142,6 +142,8 @@ const handleGoogleLogin = async () => {
           >
             {loading ? "Please wait..." : "Login"}
           </Button>
+          <p className="text-sm text-center text-muted-foreground"></p>
+
           <Button 
             variant="ghost" 
             disabled={loading}

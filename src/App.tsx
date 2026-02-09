@@ -8,6 +8,7 @@ import { SplashScreen } from "./components/splashscreen"
 import { ChatPage } from './pages/ChatPage';
 import { PricingPage } from "./pages/PricingPage"
 import { LikesPage } from "./pages/LikesPage"
+import PublicLayout from "./components/PublicLayout"
 
 
 
@@ -67,7 +68,13 @@ function Guard({ children }: { children: React.ReactNode }) {
   if (loading) return <SplashScreen />
   
   // 2. Om ingen användare är inloggad, skicka till login
-  if (!user) return <Navigate to="/" replace />
+ // if (!user) return <Navigate to="/" replace />
+ if (!user) {
+    if (location.pathname !== "/") {
+      return <Navigate to="/" replace />
+    }
+    return null // låt AuthPage renderas
+  }
 
   // 3. SPECIALKOLL FÖR ONBOARDING:
   // Vi kollar om användaren faktiskt är på onboarding-sidan just nu.
@@ -101,31 +108,34 @@ export default function App() {
       <BrowserRouter>
        <Routes>
         {/* Publik */}
+        {/* <Route path="/" element={<AuthPage />} /> */}
+      <Route element={<PublicLayout />}>
           <Route path="/" element={<AuthPage />} />
+      </Route>
           
         {/* 2. ONBOARDING (Guard finns, men ingen navbar layout) */}
-  <Route path="/onboarding" element={
-      <Guard>
-        <OnboardingPage />
-      </Guard>
-    }  />
+        <Route path="/onboarding" element={
+            <Guard>
+              <OnboardingPage />
+            </Guard>
+          }  />
 
 
        {/* Skyddat område med Layout */}
-  <Route 
-    element={
-      <Guard>
-        <AppLayout />
-      </Guard>
-    }
-  >
-    <Route path="/app" element={<AppPage />} />
-    <Route path="/onboarding" element={<OnboardingPage />} />
-    <Route path="/chat" element={<ChatPage />} />
-    <Route path="/likes" element={<LikesPage />} />
-    <Route path="/pricing" element={<PricingPage />} />
-    {/* Du kan lägga till fler sidor här, t.ex. /settings */}
-  </Route>
+        <Route 
+                  element={
+                    <Guard>
+                      <AppLayout />
+                    </Guard>
+                  }
+                >
+            <Route path="/app" element={<AppPage />} />
+            {/* <Route path="/onboarding" element={<OnboardingPage />} /> */}
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/likes" element={<LikesPage />} />
+            <Route path="/pricing" element={<PricingPage />} />
+            {/* Du kan lägga till fler sidor här, t.ex. /settings */}
+        </Route>
 </Routes>
 
       </BrowserRouter>

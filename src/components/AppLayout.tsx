@@ -57,11 +57,11 @@ const [hasNewLikes, setHasNewLikes] = useState(false);
 const handleLogout = async () => {
   await supabase.auth.signOut()
 
-  const landing =
-    import.meta.env.VITE_LANDING_URL?.replace(/\/+$/, "") ||
-    "https://gemdating.vercel.app"
+  // const landing =
+  //   import.meta.env.VITE_LANDING_URL?.replace(/\/+$/, "") ||
+  //   "https://gemdating.vercel.app"
 
-  window.location.replace(landing)
+  // window.location.replace(landing)
 }
 
 
