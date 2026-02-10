@@ -28,103 +28,118 @@ interface MessagePayload {
 }
 
 export default function AppLayout() {
-
-const [hasNewLikes, setHasNewLikes] = useState(false);
-
-
+  const [hasNewLikes, setHasNewLikes] = useState(false);
   const { user } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-
-
-  // const handleLogout = async () => {
-  //   await supabase.auth.signOut()
-  //   window.location.href = import.meta.env.VITE_LANDING_URL
-  // }
-
-//   const handleLogout = async () => {
-//   const landing =
-//     import.meta.env.VITE_LANDING_URL?.replace(/\/+$/, "") ||
-//     "https://gemdating.vercel.app"
-
-//   // Redirecta DIREKT – innan React hinner rerendra
-//   window.location.replace(landing)
-
-//   // Logga ut i bakgrunden
-//   await supabase.auth.signOut()
-// }
-
-const handleLogout = async () => {
+  const handleLogout = async () => {
   await supabase.auth.signOut()
-
-  // const landing =
-  //   import.meta.env.VITE_LANDING_URL?.replace(/\/+$/, "") ||
-  //   "https://gemdating.vercel.app"
-
-  // window.location.replace(landing)
 }
-
-
-
-  // Hämta första bokstaven i e-posten för avataren
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U"
   const [unreadCount, setUnreadCount] = useState(0)
 
-// REALTIME: Lyssna på nya meddelanden och uppdatera unread count
-  useEffect(() => {
-  if (!user) return
 
-  const getUnread = async () => {
-    const { count } = await supabase
-      .from('messages')
-      .select('*', { count: 'exact', head: true })
-      .eq('is_read', false)
-      .neq('sender_id', user.id)
 
-    setUnreadCount(count || 0)
+useEffect(() => {
+  // 0. Reset om ingen user
+  if (!user?.id) {
+    setUnreadCount(0)
+    return
   }
+
+  let isMounted = true
+
+  // 1. Hämta korrekt initial unread count
+  const getUnread = async () => {
+    const { data: matches } = await supabase
+      .from("matches")
+      .select("id")
+      .or(`user_1.eq.${user.id},user_2.eq.${user.id}`)
+
+    const matchIds = matches?.map(m => m.id) || []
+
+    if (matchIds.length === 0) {
+      if (isMounted) setUnreadCount(0)
+      return
+    }
+
+    const { count } = await supabase
+      .from("messages")
+      .select("id", { count: "exact", head: true })
+      .eq("is_read", false)
+      .neq("sender_id", user.id)
+      .in("match_id", matchIds)
+
+    if (isMounted) {
+      setUnreadCount(count || 0)
+    }
+  }
+
   getUnread()
 
+  // 2. Realtime subscription
   const channel = supabase
-  .channel('unread-messages')
-  .on('postgres_changes', 
-    { event: '*', schema: 'public', table: 'messages' }, 
-    (payload) => {
-      console.log("REALTIME EVENT MOTTAGET:", payload);
-      const oldMsg = payload.old as MessagePayload;
-      const newMsg = payload.new as MessagePayload;
-       if (oldMsg.is_read === false && newMsg.is_read === true) {
-      setUnreadCount(prev => Math.max(0, prev - 1))
-    }
-    }
-  )
-  .subscribe((status) => {
-    console.log("REALTIME STATUS:", status); // Denna bör skriva 'SUBSCRIBED'
-  });
+    .channel("unread-messages")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "messages" },
+      payload => {
+        const oldMsg = payload.old as MessagePayload | null
+        const newMsg = payload.new as MessagePayload | null
 
-  return () => { supabase.removeChannel(channel) }
-}, [user])
+        // NYTT MEDDELANDE → öka count
+        if (
+          payload.eventType === "INSERT" &&
+          newMsg &&
+          !newMsg.is_read &&
+          newMsg.sender_id !== user.id
+        ) {
+          setUnreadCount(prev => prev + 1)
+        }
+
+        // MEDDELANDE MARKERAT SOM LÄST → minska count
+        if (
+          payload.eventType === "UPDATE" &&
+          oldMsg &&
+          newMsg &&
+          oldMsg.is_read === false &&
+          newMsg.is_read === true &&
+          newMsg.sender_id !== user.id
+        ) {
+          setUnreadCount(prev => Math.max(0, prev - 1))
+        }
+      }
+    )
+    .subscribe()
+
+  // 3. Cleanup
+  return () => {
+    isMounted = false
+    supabase.removeChannel(channel)
+  }
+}, [user?.id])
 
 
 
-// REALTIME: Lyssna på nya likes och uppdatera hasNewLikes
+
+
 useEffect(() => {
   if (!user?.id) return;
 
-  // 1. Kolla om det finns några obesvarade likes när sidan laddas
+
   const checkLikes = async () => {
     const { data } = await supabase
       .from('likes')
       .select('id')
       .eq('to_user_id', user.id)
-      .is('is_matched', false) // Bara de som inte matchat än
+      .is('is_matched', false)
       .limit(1);
     
     if (data && data.length > 0) setHasNewLikes(true);
   };
   checkLikes();
 
-  // 2. Lyssna live på när NYA likes trillar in
+  
   const likesChannel = supabase
     .channel('navbar-likes')
     .on('postgres_changes', 

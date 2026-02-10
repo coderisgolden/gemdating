@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Send, MessageSquare } from 'lucide-react'
 
 
+
 export function ChatPage() {
   const { user } = useAuth()
   const [matches, setMatches] = useState<any[]>([])
@@ -15,8 +16,10 @@ export function ChatPage() {
   const [messages, setMessages] = useState<any[]>([])
   const [newMessage, setNewMessage] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [view, setView] = useState<"list" | "detail">("list")
   const scrollToBottom = () => {
   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  
 }
   // 1. Hämta alla matcher
   useEffect(() => {
@@ -130,19 +133,36 @@ if (data) {
     if (!error) setNewMessage('')
   }
 
+
+
+
+
+
+
+
+
+
   return (
-    <div className="flex h-[calc(100vh-80px)] bg-white border rounded-xl overflow-hidden shadow-sm">
+    <div className="flex flex-col md:flex-row h-[calc(100vh-80px)] bg-white border rounded-xl overflow-hidden shadow-sm">
+
       {/* VÄNSTER: Match-lista */}
-      <div className="w-80 border-r flex flex-col bg-gray-50/50">
+      <div className={`
+    md:w-80 md:border-r flex flex-col bg-slate-50/50
+    ${view === "detail" ? "hidden md:flex" : "flex"}
+  `}>
         <div className="p-4 border-b bg-white">
           <h2 className="text-xl font-bold">Messages</h2>
         </div>
-        <ScrollArea className="flex-1">
+        <ScrollArea className="flex-1 overflow-y-auto p-4">
           
           {matches.map((m) => (
             <div 
               key={m.matchId}
-              onClick={() => setSelectedMatch(m)}
+              // onClick={() => setSelectedMatch(m)}
+              onClick={() => {
+              setSelectedMatch(m)   // DATA
+              setView("detail")             // UI
+              }}
               className={`p-4 flex items-center gap-3 cursor-pointer transition-colors hover:bg-white ${selectedMatch?.matchId === m.matchId ? 'bg-white border-r-4 border-brand-500' : ''}`}
             >
               <Avatar className="h-12 w-12 border">
@@ -159,7 +179,12 @@ if (data) {
       </div>
 
       {/* HÖGER: Chat-fönster */}
-      <div className="flex-1 flex flex-col bg-white">
+      <div
+  className={`
+    flex-1 flex flex-col
+    ${view === "list" ? "hidden md:flex" : "flex"}
+  `}
+>
         {selectedMatch ? (
           <>
             <div className="p-4 border-b flex items-center gap-3">
@@ -169,7 +194,7 @@ if (data) {
               <p className="font-bold">{selectedMatch.about_you?.name}</p>
             </div>
 
-            <ScrollArea className="flex-1 p-4 space-y-4">
+            <ScrollArea className="flex-1 overflow-y-auto p-4">
               <div className="space-y-4"> 
               {messages.map((msg) => (
                 <div key={msg.id} className={`flex ${msg.sender_id === user?.id ? 'justify-end' : 'justify-start'}`}>
@@ -186,13 +211,29 @@ if (data) {
               <Input 
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Skriv ett meddelande..."
+                placeholder="Send a message..."
                 className="rounded-full"
               />
               <Button type="submit" size="icon" className="rounded-full bg-brand-500 hover:bg-brand-600">
                 <Send className="h-4 w-4" />
               </Button>
             </form>
+            <Button
+                onClick={() => setView("list")}
+                variant="outline"
+                    className="
+                      w-full
+                      h-10 sm:h-11 lg:h-12
+                      rounded-full
+                      border-gray-300
+                      text-gray-700
+                      font-medium
+                      mt-3 sm:mt-4
+                      text-sm sm:text-base
+                    "
+                >
+                Back to chat
+              </Button>
           </>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-8">

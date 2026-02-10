@@ -95,8 +95,8 @@ export function UserCard({ profile,  currentUserPhoto }: UserCardProps) {
 
 const onSendMessage = () => {
 
-  alert("Funktionen onSendMessage körs!"); // Kommer denna upp?
-  console.log("Match ID:", matchData?.matchId);
+  // alert("Funktionen onSendMessage körs!"); // Kommer denna upp?
+  // console.log("Match ID:", matchData?.matchId);
   if (matchData?.matchId) {
     // Stäng alla fönster först
     setShowMatchModal(false);
@@ -143,7 +143,7 @@ const onSendMessage = () => {
 
       {/* MODALEN STARTAR HÄR */}
         <DialogContent className="/* Mobil: Fullskärm och nollställ centrering */
-          fixed inset-0 translate-x-0 translate-y-0 max-w-none h-full w-full rounded-none border-none p-0
+         fixed  inset-0 translate-x-0 translate-y-0 max-w-none h-full w-full rounded-none border-none p-0
           
           /* Desktop (md och uppåt): Centrerad box */
           md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 
@@ -241,7 +241,7 @@ const onSendMessage = () => {
                 {interestsArray.map((interest: string) => (
                   <Badge 
                     key={interest} 
-                    className="px-4 py-1.5 rounded-full text-sm font-medium bg-gradient-to-r from-pink-500 to-purple-500 text-white border-0"
+                    className="px-4 py-1.5 rounded-full text-sm font-medium bg-brand-500 text-white border-0"
                   >
                     {interest}
                   </Badge>
@@ -257,13 +257,13 @@ const onSendMessage = () => {
             </h4>
             <div className="space-y-2.5">
               <div className="flex items-center gap-2.5 text-sm text-gray-800">
-                <svg className="w-5 h-5 text-pink-500" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5 text-brand-500" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
                 </svg>
                 <span>Marketing Professional</span>
               </div>
               <div className="flex items-center gap-2.5 text-sm text-gray-800">
-                <svg className="w-5 h-5 text-pink-500" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5 text-brand-500" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd"/>
                 </svg>
                 <span>Looking for: Long-term relationship</span>

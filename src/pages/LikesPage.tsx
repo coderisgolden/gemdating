@@ -22,6 +22,8 @@ export function LikesPage() {
   const [matchData, setMatchData] = useState<any>(null)
   const [myPhoto, setMyPhoto] = useState<string | null>(null);
   const [isLiking, setIsLiking] = useState(false);
+  const [view, setView] = useState<"list" | "detail">("list")
+
 
   // 1. Fetch people who liked ME (to_user_id = my id)
   useEffect(() => {
@@ -79,26 +81,6 @@ export function LikesPage() {
 
 
 
-  // 2. The "Like Back" logic
-  // const handleLikeBack = async (targetId: string) => {
-  //   const { data, error } = await supabase.rpc('handle_like', { 
-  //     target_user_id: targetId 
-  //   })
-
-  //   if (error) return
-  //   setMatchData(data)
-
-  //   if (data?.isMatch) {
-  //     // It's a match! Show the popup
-  //     setShowMatchModal(true)
-  //     // Note: We DON'T set selectedProfile to null here yet 
-  //     // to keep the background visible behind the modal
-  //   } else {
-  //     // Just a normal like (shouldn't happen here, but safe to have)
-  //     setLikes(prev => prev.filter(p => p.id !== targetId))
-  //     setSelectedProfile(likes.find(p => p.id !== targetId) || null)
-  //   }
-  // }
 
 const handleLikeBack = async (targetId: string) => {
   setIsLiking(true); // 1. Starta laddningen/spinnern här!
@@ -148,10 +130,13 @@ const handleLikeBack = async (targetId: string) => {
   }
 
   return (
-    <div className="flex h-[calc(100vh-120px)] bg-white border rounded-3xl overflow-hidden shadow-xl animate-in fade-in zoom-in-95 duration-500">
+    <div className="flex flex-col md:flex-row h-[calc(100vh-120px)] bg-white border rounded-3xl overflow-hidden shadow-xl animate-in fade-in zoom-in-95 duration-500">
       
       {/* LEFT SIDEBAR: List of people */}
-      <div className="w-80 border-r flex flex-col bg-slate-50/50">
+      <div  className={`
+    md:w-80 md:border-r flex flex-col bg-slate-50/50
+    ${view === "detail" ? "hidden md:flex" : "flex"}
+  `}>
         <div className="p-6 border-b bg-white flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-brand-500" />
           <h2 className="text-xl font-black text-slate-900">Likes</h2>
@@ -162,7 +147,11 @@ const handleLikeBack = async (targetId: string) => {
             {likes.map((profile) => (
               <button 
                 key={profile.id}
-                onClick={() => setSelectedProfile(profile)}
+                // onClick={() => setSelectedProfile(profile)}
+                onClick={() => {
+                  setSelectedProfile(profile)
+                  setView("detail")
+              }}
                 className={`w-full p-4 flex items-center gap-3 rounded-2xl transition-all ${
                   selectedProfile?.id === profile.id 
                     ? 'bg-white shadow-md ring-1 ring-black/5 scale-[1.02]' 
@@ -186,10 +175,15 @@ const handleLikeBack = async (targetId: string) => {
       </div>
 
       {/* RIGHT CONTENT: Profile View */}
-      <div className="flex-1 relative">
+      <div 
+       className={`
+    flex-1
+    ${view === "list" ? "hidden md:block" : "block"}
+  `}>
         {selectedProfile ? (
           <ProfileView 
             profile={selectedProfile} 
+            onBack={() => setView("list")}
             onLike={() => handleLikeBack(selectedProfile.id)} 
             isLiking={isLiking} // Pass the loading state to ProfileView
           />
