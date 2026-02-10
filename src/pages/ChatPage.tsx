@@ -230,6 +230,7 @@ if (data) {
                       font-medium
                       mt-3 sm:mt-4
                       text-sm sm:text-base
+                      md:hidden
                     "
                 >
                 Back to chat

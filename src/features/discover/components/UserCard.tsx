@@ -227,7 +227,7 @@ const onSendMessage = () => {
               ABOUT ME
             </h4>
             <p className="text-sm leading-relaxed text-gray-800">
-              {profile.about_you?.bio || "Ingen beskrivning ännu."}
+              {profile.about_you?.bio || "No bio provided."}
             </p>
           </section>
 
